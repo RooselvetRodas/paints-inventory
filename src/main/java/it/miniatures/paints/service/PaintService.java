@@ -2,12 +2,14 @@ package it.miniatures.paints.service;
 
 import it.miniatures.paints.entity.Paint;
 import it.miniatures.paints.repository.PaintRepository;
+import it.miniatures.paints.util.ExcelExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -82,5 +84,11 @@ public class PaintService {
         Paint p = getById(id);
         repository.delete(p);
         log.info("Cancellato colore id={} ({}, {})", id, p.getBrand(), p.getColorName());
+    }
+
+    public void exportToExcel(OutputStream out) throws Exception {
+        List<Paint> paints = repository.findAll();
+        log.info("Exporting {} paints to Excel", paints.size());
+        ExcelExporter.exportPaints(paints, out);
     }
 }
